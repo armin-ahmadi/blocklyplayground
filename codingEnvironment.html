@@ -79,6 +79,17 @@
                         <img src="images/cat3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <img src="images/dog1_numbered.jpg" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/dog2_numbered.jpg" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/dog3_numbered.jpg" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
@@ -97,8 +108,14 @@
         <block type="whenrunclicked"></block>
         <block type="clearscreen"></block>
     </category>
-    <category name="cats" colour="175">
-        <block type="catpose"></block>
+    <category name="animals" colour="175">
+        <block type="say" colour="555"></block>
+        <category name="cats" colour="175">
+            <block type="catpose"></block>
+        </category>
+        <category name="dogs" colour="111">
+            <block type="dogpose"></block>
+        </category>
     </category>
 
     <sep></sep>
@@ -186,10 +203,25 @@
 
     var cat1 = sprite({
         context: canvas.getContext("2d"),
-        width: 500,
+        width: 300,
         height: 500,
         image: catImage,
         x: 0,
+        y: 0
+    });
+
+    /**********************
+     * Defining the dog *
+     **********************/
+    var dogImage = new Image();
+    dogImage.src = "images/dog1.jpg";
+
+    var dog1 = sprite({
+        context: canvas.getContext("2d"),
+        width: 500,
+        height: 500,
+        image: dogImage,
+        x: 250,
         y: 0
     });
 
@@ -198,9 +230,16 @@
      ******************/
     cat1.render();
 
-    var indexToArrays = 0;
+    /******************
+     * Show the dog *
+     ******************/
+    dog1.render();
+
+    var speakText = '';
+
+    var instructionIndex = 0;
     var numOfInstructions = 0;
-    var arrayOfPoses = [];
+    var arrayOfInstructions = [];
 
     /**************************************
      * RUN and STOP buttons on the canvas *
@@ -227,19 +266,38 @@
         window.requestAnimationFrame(animate);
     }
 
-    function updatePose(poseNum){
-        arrayOfPoses.push(poseNum);
+    function updateCatPose(poseNum){
+        arrayOfInstructions.push(['CAT', poseNum]);
+        numOfInstructions++;
+    }
+
+    function updateDogPose(poseNum){
+        arrayOfInstructions.push(['DOG', poseNum]);
+        numOfInstructions++;
+    }
+
+    function say(text) {
+        arrayOfInstructions.push(['SAY', text]);
         numOfInstructions++;
     }
 
     function animate() {
         setTimeout(function() {
-            setcatImage(arrayOfPoses[indexToArrays]);
+            let instruction = arrayOfInstructions[instructionIndex];
 
-            indexToArrays++;
+            if (instruction[0] == 'CAT') {
+                setcatImage(instruction[1]);
+            }
+            else if (instruction[0] == 'DOG') {
+                setdogImage(instruction[1])
+            }
+            else if (instruction[0] == 'SAY') {
+                setSpeakText(instruction[1]);
+            }
+            instructionIndex++;
 
-            if (indexToArrays == numOfInstructions)
-                indexToArrays = 0;
+            if (instructionIndex == numOfInstructions)
+                instructionIndex = 0;
 
             if (animation) {
                 window.requestAnimationFrame(animate);
@@ -249,11 +307,16 @@
 
     function stopCode() {
         animation = false;
+        instructionIndex = 0;
+        numOfInstructions = 0;
+        arrayOfInstructions = [];
     }
 
     function resetCanvas(){
         clearCanvas();
         setcatImage(1);
+        setdogImage(1);
+        setSpeakText('');
     }
 
     /*************************************
@@ -275,11 +338,23 @@
     function setcatImage(catIndex){
         if(!catIndex)
           catIndex = 1;
-        clearCanvas();
         catImage.src = "images/cat"+catIndex+".png";
-        ctx.drawImage(cat1.image, cat1.x, cat1.y);
-        ctx.save();
-        ctx.restore();
+        redrawCanvas();
+    }
+
+    /*****************************
+     * Changing the dog's Pose *
+     *****************************/
+    function setdogImage(dogIndex){
+        if(!dogIndex)
+          dogIndex = 1;
+        dogImage.src = "images/dog"+dogIndex+".jpg";
+        redrawCanvas();
+    }
+
+    function setSpeakText(text) {
+        speakText = text;
+        redrawCanvas()
     }
 
     /***********************
@@ -287,6 +362,21 @@
      ***********************/
     function clearCanvas(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.restore();
+    }
+
+    // If we want to only change one animal's pose, or only change the text,
+    // the easiest way to make that single change is to remove everything from
+    // the canvas and redraw.
+    function redrawCanvas() {
+        clearCanvas();
+        ctx.drawImage(dog1.image, dog1.x, dog1.y);
+        ctx.drawImage(cat1.image, cat1.x, cat1.y);
+        ctx.font = "30px Comic Sans MS";
+        ctx.fillStyle = "red";
+        ctx.textAlign = "center";
+        ctx.fillText(speakText, canvas.width/2, canvas.height * 3/4);
         ctx.save();
         ctx.restore();
     }

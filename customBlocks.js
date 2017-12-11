@@ -31,13 +31,40 @@ Blockly.Blocks['clearscreen'] = {
 Blockly.Blocks['catpose'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("Change Pose")
+            .appendField("Change Cat Pose")
             .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "catIndex");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(175);
         this.setTooltip("");
         this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['dogpose'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Change Dog Pose")
+            .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "dogIndex");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(111);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['say'] = {
+    init: function() {
+        this.appendDummyInput()
+        this.appendValueInput("STRING")
+            .appendField("Say");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(333);
+        this.setTooltip("");
+        this.setHelpUrl("");
+        this.setInputsInline(true);
     }
 };
 
@@ -54,6 +81,19 @@ Blockly.JavaScript['clearscreen'] = function(block) {
 
 Blockly.JavaScript['catpose'] = function(block) {
     var dropdown_catindex = block.getFieldValue('catIndex');
-    var blockCode = 'updatePose('+dropdown_catindex+');';
+    var blockCode = 'updateCatPose('+dropdown_catindex+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['dogpose'] = function(block) {
+    var dropdown_dogindex = block.getFieldValue('dogIndex');
+    var blockCode = 'updateDogPose('+dropdown_dogindex+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['say'] = function(block) {
+    // var say_text = block.getFieldValue('STRING');
+    var say_text = Blockly.JavaScript.valueToCode(block, 'STRING', Blockly.JavaScript.ORDER_ADDITION) || ''
+    var blockCode = 'say('+say_text+');';
     return blockCode;
 };
