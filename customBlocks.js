@@ -68,6 +68,32 @@ Blockly.Blocks['say'] = {
     }
 };
 
+Blockly.Blocks['catmove'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Move Cat")
+            .appendField(new Blockly.FieldNumber('100'), 'CATMOVE');
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(175);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['dogmove'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Move Dog")
+            .appendField(new Blockly.FieldNumber('100'), 'DOGMOVE');
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(111);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
 Blockly.JavaScript['whenrunclicked'] = function(block) {
     var statements_name = Blockly.JavaScript.statementToCode(block, 'NAME');
     var blockCode = statements_name;
@@ -95,5 +121,17 @@ Blockly.JavaScript['say'] = function(block) {
     // var say_text = block.getFieldValue('STRING');
     var say_text = Blockly.JavaScript.valueToCode(block, 'STRING', Blockly.JavaScript.ORDER_ADDITION) || ''
     var blockCode = 'say('+say_text+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['catmove'] = function(block) {
+    var move_amount = block.getFieldValue('CATMOVE');
+    var blockCode = 'updateCatPosition('+move_amount+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['dogmove'] = function(block) {
+    var move_amount = block.getFieldValue('DOGMOVE');
+    var blockCode = 'updateDogPosition('+move_amount+');';
     return blockCode;
 };

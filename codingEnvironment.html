@@ -112,9 +112,11 @@
         <block type="say" colour="555"></block>
         <category name="cats" colour="175">
             <block type="catpose"></block>
+            <block type="catmove"></block>
         </category>
         <category name="dogs" colour="111">
             <block type="dogpose"></block>
+            <block type="dogmove"></block>
         </category>
     </category>
 
@@ -237,6 +239,7 @@
 
     var speakText = '';
 
+    // One queue for all instructions.
     var instructionIndex = 0;
     var numOfInstructions = 0;
     var arrayOfInstructions = [];
@@ -267,12 +270,22 @@
     }
 
     function updateCatPose(poseNum){
-        arrayOfInstructions.push(['CAT', poseNum]);
+        arrayOfInstructions.push(['CATPOSE', poseNum]);
+        numOfInstructions++;
+    }
+
+    function updateCatPosition(move_amount) {
+        arrayOfInstructions.push(['CATMOVE', move_amount]);
         numOfInstructions++;
     }
 
     function updateDogPose(poseNum){
-        arrayOfInstructions.push(['DOG', poseNum]);
+        arrayOfInstructions.push(['DOGPOSE', poseNum]);
+        numOfInstructions++;
+    }
+
+    function updateDogPosition(move_amount) {
+        arrayOfInstructions.push(['DOGMOVE', move_amount]);
         numOfInstructions++;
     }
 
@@ -281,18 +294,25 @@
         numOfInstructions++;
     }
 
+    // Loop through queue of instructions and execute one each second.
     function animate() {
         setTimeout(function() {
             let instruction = arrayOfInstructions[instructionIndex];
 
-            if (instruction[0] == 'CAT') {
+            if (instruction[0] == 'CATPOSE') {
                 setcatImage(instruction[1]);
             }
-            else if (instruction[0] == 'DOG') {
+            else if (instruction[0] == 'DOGPOSE') {
                 setdogImage(instruction[1])
             }
             else if (instruction[0] == 'SAY') {
                 setSpeakText(instruction[1]);
+            }
+            else if (instruction[0] == 'CATMOVE') {
+                moveCat(instruction[1]);
+            }
+            else if (instruction[0] == 'DOGMOVE') {
+                moveDog(instruction[1]);
             }
             instructionIndex++;
 
@@ -305,6 +325,7 @@
         }, 1000);
     }
 
+    // Resets the instruction queue when code is stopped.
     function stopCode() {
         animation = false;
         instructionIndex = 0;
@@ -355,6 +376,16 @@
     function setSpeakText(text) {
         speakText = text;
         redrawCanvas()
+    }
+
+    function moveCat(move_amount) {
+        cat1.x += move_amount;
+        redrawCanvas();
+    }
+
+    function moveDog(move_amount) {
+        dog1.x += move_amount;
+        redrawCanvas();
     }
 
     /***********************
